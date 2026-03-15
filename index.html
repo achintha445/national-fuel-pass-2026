@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National Fuel Pass | ජාතික ඉන්ධන බලපත්‍රය</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <style>
+        :root { --gov-blue: #003366; --gov-red: #d32f2f; --light-bg: #f8f9fa; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--light-bg); margin: 0; color: #333; }
+        header { background: white; padding: 15px; text-align: center; border-bottom: 4px solid var(--gov-red); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .container { max-width: 500px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h2 { color: var(--gov-blue); text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 25px; }
+        label { display: block; margin-top: 15px; font-weight: 600; color: #444; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 15px; }
+        .btn-register { width: 100%; padding: 15px; background: var(--gov-blue); color: white; border: none; border-radius: 4px; margin-top: 25px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; }
+        .btn-register:hover { background: #002244; }
+        #qr-result { display: none; text-align: center; margin-top: 30px; padding: 20px; border: 2px dashed #ccc; background: #fff; }
+        canvas { margin-top: 15px; border: 8px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .quota-info { font-size: 12px; margin-top: 20px; color: #777; border-top: 1px solid #eee; padding-top: 15px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="https://www.icta.lk/icta-assets/uploads/2021/07/gov-logo.png" alt="Gov Logo" width="50">
+    <div style="font-weight: bold; font-size: 18px; margin-top: 5px;">ශ්‍රී ලංකා රජය | Government of Sri Lanka</div>
+</header>
+
+<div class="container">
+    <h2>ජාතික ඉන්ධන බලපත්‍රය</h2>
+    <div class="subtitle">National Fuel Pass - Vehicle Registration 2026</div>
+    
+    <form id="fuelForm">
+        <label>ජාතික හැඳුනුම්පත් අංකය (NIC)</label>
+        <input type="text" id="nic" placeholder="Ex: 199012345678" required>
+
+        <label>ජංගම දුරකථන අංකය (Mobile)</label>
+        <input type="tel" id="mobile" placeholder="07XXXXXXXX" required>
+
+        <label>වාහන අංකය (Vehicle No)</label>
+        <input type="text" id="vehicle" placeholder="Ex: WP ABC-1234" required>
+
+        <label>චැසි අංකය (Chassis No)</label>
+        <input type="text" id="chassis" placeholder="අනිවාර්ය වේ" required>
+
+        <label>වාහන කාණ්ඩය (Vehicle Category)</label>
+        <select id="vType">
+            <option value="5">යතුරුපැදි (Motorbike) - 5L</option>
+            <option value="15">ත්‍රීරෝද රථ (3-Wheeler) - 15L</option>
+            <option value="15">මෝටර් රථ (Car) - 15L</option>
+            <option value="40">වෑන් රථ (Van) - 40L</option>
+            <option value="60">බස් රථ (Bus) - 60L</option>
+        </select>
+
+        <button type="button" class="btn-register" onclick="generateQR()">ලියාපදිංචි වන්න (Register)</button>
+    </form>
+
+    <div id="qr-result">
+        <h3 style="color: green;">ලියාපදිංචිය සාර්ථකයි!</h3>
+        <canvas id="qr-code"></canvas>
+        <p><b>ඔබේ සතිපතා ලීටර් ප්‍රමාණය: <span id="quota-display"></span>L</b></p>
+        <button onclick="window.print()" style="background: none; border: 1px solid #999; padding: 5px 10px; cursor: pointer;">පිටපතක් ලබාගන්න (Print)</button>
+    </div>
+
+    <div class="quota-info">
+        * 2026 මාර්තු 15 දින සිට ක්‍රියාත්මක වන පරිදි සියලුම වාහන සඳහා QR කේතය අනිවාර්ය වේ. සතිපතා කෝටාව සෑම ඉරිදා මධ්‍යම රාත්‍රියේම යාවත්කාලීන වේ.
+    </div>
+</div>
+
+<script>
+    function generateQR() {
+        const nic = document.getElementById('nic').value;
+        const vehicle = document.getElementById('vehicle').value;
+        const quota = document.getElementById('vType').value;
+
+        if(!nic || !vehicle) { alert("කරුණාකර සියලු විස්තර පුරවන්න."); return; }
+
+        document.getElementById('fuelForm').style.display = 'none';
+        document.getElementById('qr-result').style.display = 'block';
+        document.getElementById('quota-display').innerText = quota;
+
+        new QRious({
+            element: document.getElementById('qr-code'),
+            size: 200,
+            value: `FUEL-PASS-2026|${vehicle}|${nic}|QUOTA:${quota}L`
+        });
+    }
+</script>
+
+</body>
+</html>
