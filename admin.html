@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard | Fuel Pass</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f0f2f5; }
+        .dashboard { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { color: #003366; border-bottom: 2px solid #d32f2f; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background: #003366; color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .stats { font-weight: bold; color: #d32f2f; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <h2>පරිපාලන පද්ධතිය (Admin Dashboard)</h2>
+    <p class="stats">මුළු ලියාපදිංචි සංඛ්‍යාව: <span id="userCount">0</span></p>
+
+    <table id="userTable">
+        <thead>
+            <tr>
+                <th>NIC</th>
+                <th>Vehicle No</th>
+                <th>Date Registered</th>
+            </tr>
+        </thead>
+        <tbody>
+            </tbody>
+    </table>
+</div>
+
+<script>
+    async function loadData() {
+        const backendURL = "https://your-project-name.up.railway.app/api/admin/users";
+        const response = await fetch(backendURL);
+        const users = await response.json();
+
+        document.getElementById('userCount').innerText = users.length;
+        const tableBody = document.querySelector('#userTable tbody');
+
+        users.forEach(user => {
+            const row = `<tr>
+                <td>${user.nic}</td>
+                <td>${user.vehicleNo}</td>
+                <td>${new Date(user.date).toLocaleString()}</td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+    loadData();
+</script>
+</body>
+</html>
