@@ -34,24 +34,50 @@
 </div>
 
 <script>
-    async function loadData() {
-        const backendURL = "https://your-project-name.up.railway.app/api/admin/users";
-        const response = await fetch(backendURL);
-        const users = await response.json();
+async function loadData() {
+    // 1. GET YOUR URL: Go to Railway -> Backend -> Settings -> Networking
+    // It should look like this: https://fuel-pass-backend-production.up.railway.app
+    const domain = "https://PASTE-YOUR-RAILWAY-DOMAIN-HERE.up.railway.app";
+    const backendURL = `${domain}/api/admin/users`;
+    
+    console.log("Connecting to:", backendURL);
 
-        document.getElementById('userCount').innerText = users.length;
+    try {
+        const response = await fetch(backendURL);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const users = await response.json();
+        console.log("Data received:", users);
+
         const tableBody = document.querySelector('#userTable tbody');
+        tableBody.innerHTML = ""; // Clear "Loading" text
+
+        if (users.length === 0) {
+            tableBody.innerHTML = "<tr><td colspan='3'>දත්ත කිසිවක් හමු නොවීය.</td></tr>";
+            return;
+        }
 
         users.forEach(user => {
             const row = `<tr>
-                <td>${user.nic}</td>
-                <td>${user.vehicleNo}</td>
-                <td>${new Date(user.date).toLocaleString()}</td>
+                <td>${user.nic || 'N/A'}</td>
+                <td>${user.vehicleNo || 'N/A'}</td>
+                <td>${user.date ? new Date(user.date).toLocaleString() : 'N/A'}</td>
             </tr>`;
             tableBody.innerHTML += row;
         });
+
+        document.getElementById('userCount').innerText = users.length;
+
+    } catch (err) {
+        console.error("Dashboard Error:", err);
+        alert("දත්ත ලබා ගැනීමට නොහැකි විය. කරුණාකර Railway URL එක පරීක්ෂා කරන්න.");
     }
-    loadData();
-</script>
+}
+
+// Start loading
+loadData();
 </body>
 </html>
