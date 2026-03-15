@@ -70,13 +70,30 @@
 </div>
 
 <script>
-    function generateQR() {
-        const nic = document.getElementById('nic').value;
-        const vehicle = document.getElementById('vehicle').value;
-        const quota = document.getElementById('vType').value;
+    async function generateQR() {
+    const nic = document.getElementById('nic').value;
+    const vehicle = document.getElementById('vehicle').value;
+    const quota = document.getElementById('vType').value;
 
-        if(!nic || !vehicle) { alert("කරුණාකර සියලු විස්තර පුරවන්න."); return; }
+    if(!nic || !vehicle) { 
+        alert("කරුණාකර සියලු විස්තර පුරවන්න."); 
+        return; 
+    }
 
+    // Replace the URL below with your actual Railway URL
+    const backendURL = "https://your-project-name.up.railway.app/api/register";
+
+    try {
+        // Sending data to the Railway Engine
+        const response = await fetch(backendURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nic, vehicleNo: vehicle })
+        });
+
+        const data = await response.json();
+
+        // If the engine responds, show the success screen and QR
         document.getElementById('fuelForm').style.display = 'none';
         document.getElementById('qr-result').style.display = 'block';
         document.getElementById('quota-display').innerText = quota;
@@ -84,9 +101,14 @@
         new QRious({
             element: document.getElementById('qr-code'),
             size: 200,
-            value: `FUEL-PASS-2026|${vehicle}|${nic}|QUOTA:${quota}L`
+            value: `FUEL-PASS-2026|${vehicle}|${nic}|ID:${data.status}`
         });
+        
+    } catch (error) {
+        alert("සර්වර් එක සම්බන්ධ කරගත නොහැකි විය. පසුව උත්සාහ කරන්න.");
+        console.error("Connection Error:", error);
     }
+}
 </script>
 
 </body>
